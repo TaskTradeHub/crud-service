@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 import ru.tasktrade.crudservice.project.enums.Status;
+import ru.tasktrade.dtojar.user.output.OutputUserDTO;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 
@@ -51,21 +53,14 @@ public class Project {
     @Column(name = "endDate")
     private LocalDateTime endDate;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private User customer;
+    @Column(name = "customer_id")
+    private Long customerId;
 
-    @ManyToOne
-    @JoinColumn(name = "producer_id")
-    private User producer;
+    @Column(name = "producer_id")
+    private Long producerId;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "projects")
-    @ToString.Exclude
-    private List<User> users;
-
-    @OneToMany(mappedBy="project")
-    @ToString.Exclude
-    private List<Task> tasks;
+    @Transient
+    private List<OutputUserDTO> users;
 
     @Override
     public boolean equals(Object o) {
@@ -79,4 +74,26 @@ public class Project {
     public int hashCode() {
         return getClass().hashCode();
     }
+
+    @PrePersist
+    public void setDefaultStatus() {
+
+        if (this.status == null) {
+            this.status = Status.WAITING; // установка дефолтного значения
+        }
+
+        if (this.creationDate == null) {
+            this.creationDate = LocalDateTime.now(ZoneId.of("Europe/Saratov")); // установка дефолтного значения
+        }
+
+        if (this.budget == null) {
+            this.budget = 0.0; // установка дефолтного значения
+        }
+
+        if (this.timeframe == null) {
+            this.timeframe = 0; // установка дефолтного значения
+        }
+
+    }
+
 }

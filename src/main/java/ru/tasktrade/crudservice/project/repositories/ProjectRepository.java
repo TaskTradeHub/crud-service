@@ -1,5 +1,6 @@
 package ru.tasktrade.crudservice.project.repositories;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.tasktrade.crudservice.project.entities.Project;
 
@@ -11,7 +12,9 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     List<Project> findProjectsByProducerId(Long producerId);
 
-    List<Project> findProjectsByUsersId(Long userId);
+    List<Project> findProjectsByCustomerId(Long customerId, Pageable pageable);
+
+    List<Project> findProjectsByProducerId(Long producerId, Pageable pageable);
 
 
 }
